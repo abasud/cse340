@@ -177,6 +177,57 @@ footer p {
     margin-bottom: 1rem;
   }
 
+.car-details-info {
+  display: block;
+}
+
+.car-details-info li {
+  list-style: none;
+  margin-bottom: 0.5rem;
+}
+
+.car-details-info h2 {
+  display: flex;
+  justify-content: center;
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+#car-description {
+  text-align: justify;
+  margin: 0 0.5rem;
+}
+
+.car-details img {
+  max-width: 100%;
+  height: auto;
+}
+
+.car-data {
+  color: var(--secondary-color);
+  font-weight: 700;
+}
+
+#inv-display li {
+  list-style: none;
+}
+
+.classification-price {
+  color: var(--secondary-color);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.namePrice a {
+  text-decoration: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.3rem;
+  color: var(--primary-color);
+  margin-bottom: 0.2rem;
+}
+
 @media screen and (min-width: 480px) {
 
   body {
@@ -262,6 +313,31 @@ footer p {
 
   footer {
     margin-top: 4rem;
+  }
+
+  .car-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+    grid-template-areas: 
+      "car-image         car-info"
+      "car-description   car-description";
+  }
+
+  .car-details img { grid-area: car-image; }
+  .car-details-info { grid-area: car-info; }
+  #car-description { grid-area: car-description; }
+
+  .car-details-info h2 {
+    font-size: 1.5rem;
+  }
+
+  #car-description {
+    margin-top: 1rem;
+  }
+
+  .car-details-info ul {
+    margin-left: 2rem;
   }
 
 }
