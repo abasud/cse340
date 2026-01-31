@@ -228,6 +228,57 @@ footer p {
   margin-bottom: 0.2rem;
 }
 
+.login-form, .register-form {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--accent3-color);
+  max-width: 500px;
+  height: auto;
+  padding: 2rem;
+  margin: 0 auto;
+}
+.login-form label, .register-form label {
+  font-family: "Roboto", sans-serif;
+  font-size: 1rem;
+  margin-right: 1rem;
+  margin-top: 1rem;
+  color: var(--primary-color);
+}
+
+.login-form input, .register-form input {
+  margin-left: 0.5rem;
+  padding-left: 0.2rem;
+  height: 44px;
+  width: 100%;
+}
+
+.login-form button, .register-form button {
+  margin: 1rem auto 0 auto;
+  height: 44px;
+  background-color: var(--accent1-color);
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  width: 100%;
+  max-width: 100px;
+}
+
+.login-form button:hover, .register-form button:hover {
+  cursor: pointer;
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.login-form p {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.register-form span, .login-form span {
+  font-family: "Roboto", sans-serif;
+}
+
 @media screen and (min-width: 480px) {
 
   body {
@@ -338,6 +389,18 @@ footer p {
 
   .car-details-info ul {
     margin-left: 2rem;
+  }
+
+  .login-form button, .register-form button {
+    max-width: 300px;
+  }
+
+  .login-form label, .register-form label {
+    font-size: 1.2rem;
+  }
+
+  .login-form button, .register-form button {
+    font-size: 1.2rem;
   }
 
 }
