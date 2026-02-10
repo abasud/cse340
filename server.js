@@ -33,6 +33,11 @@ const cookieParser = require("cookie-parser")
   name: 'sessionId',
 }))
 
+app.use((req, res, next) => {
+  res.locals.loggedin = false
+  next()
+})
+
 // Express Messages Middleware
 app.use(require('connect-flash')())
 app.use(function(req, res, next){

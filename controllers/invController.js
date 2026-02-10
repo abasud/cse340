@@ -165,4 +165,146 @@ invCont.getInventoryJSON = async (req, res, next) => {
   }
 }
 
+/* ***************************
+ *  Build edit inventory view
+ * ************************** */
+inventoryItem.editInventoryItem = async function (req, res) {
+  const inv_id = parseInt(req.params.itemId)
+  let nav = await utilities.getNav()
+  
+  const itemData = await invModel.getCarByItemId(inv_id)
+  const itemName = `${itemData[0].inv_make} ${itemData[0].inv_model}`
+  let classificationSelect = await utilities.buildClassificationList(itemData[0].classification_id)
+  res.render("./inventory/edit-inventory", {
+    title: "Edit " + itemName,
+    nav,
+    classificationSelect: classificationSelect,
+    errors: null,
+    inv_id: itemData[0].inv_id,
+    inv_make: itemData[0].inv_make,
+    inv_model: itemData[0].inv_model,
+    inv_year: itemData[0].inv_year,
+    inv_description: itemData[0].inv_description,
+    inv_image: itemData[0].inv_image,
+    inv_thumbnail: itemData[0].inv_thumbnail,
+    inv_price: itemData[0].inv_price,
+    inv_miles: itemData[0].inv_miles,
+    inv_color: itemData[0].inv_color,
+    classification_id: itemData[0].classification_id
+  })
+}
+
+/* ***************************
+ *  Update Inventory Data
+ * ************************** */
+inventoryItem.updateInventory = async function (req, res) {
+  let nav = await utilities.getNav()
+
+  const {
+    inv_id, 
+    inv_make,
+    inv_model,
+    inv_year,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_miles,
+    inv_color,
+    classification_id } = req.body
+
+  const updateVehicle = await invModel.updateVehicleData(
+    inv_id,
+    inv_make,
+    inv_model,
+    inv_year,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_miles,
+    inv_color,
+    classification_id
+  )
+
+  if (updateVehicle) {
+    req.flash(
+      "notice",
+      `Perfect! Your vehicle ${inv_make} ${inv_model} was updated.`
+    )
+    res.redirect("/inv/management")
+  } else {
+    const classificationSelect = await utilities.buildClassificationList(classification_id)
+    const itemName = `${inv_make} ${inv_model}`
+    req.flash("notice", "Sorry, the insert failed.")
+    res.status(501).render("inventory/edit-inventory", {
+    title: "Edit " + itemName,
+    nav,
+    classificationSelect: classificationSelect,
+    errors: null,
+    inv_id,
+    inv_make,
+    inv_model,
+    inv_year,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_miles,
+    inv_color,
+    classification_id
+    })
+  }
+}
+
+/* ***************************
+ *  Builds the view to delete inventory confirmation
+ * ************************** */
+inventoryItem.buildDeleteView = async function (req, res) {
+  const inv_id = parseInt(req.params.itemId)
+  let nav = await utilities.getNav()
+  
+  const itemData = await invModel.getCarByItemId(inv_id)
+  const itemName = `${itemData[0].inv_make} ${itemData[0].inv_model}`
+  res.render("./inventory/delete-confirm", {
+    title: "Delete " + itemName,
+    nav,
+    errors: null,
+    inv_id: itemData[0].inv_id,
+    inv_make: itemData[0].inv_make,
+    inv_model: itemData[0].inv_model,
+    inv_year: itemData[0].inv_year,
+    inv_price: itemData[0].inv_price,
+  })
+}
+
+/* ***************************
+ *  Delete Inventory Data
+ * ************************** */
+inventoryItem.deleteInventory = async function (req, res) {
+  let nav = await utilities.getNav()
+
+  const { inv_id } = req.body
+
+  const deletedVehicle = await invModel.deleteVehicleData(inv_id)
+
+  if (deletedVehicle) {
+    const itemName = `${deletedVehicle.inv_make} ${deletedVehicle.inv_model}`
+
+    req.flash(
+      "success",
+      `The vehicle ${itemName} was deleted.`
+    )
+    res.redirect("/inv/management")
+  } else {
+    req.flash("notice", "Sorry, the deletion failed.")
+    res.status(500).render("inventory/delete-confirm", {
+      title: "Delete Vehicle",
+      nav,
+      errors: null,
+      inv_id
+    })
+  }
+}
+
 module.exports = { invCont, itemCont, management, classificationName, inventoryItem }

@@ -113,4 +113,97 @@ validate.checkLoginData = async (req, res, next) => {
   next()
 }
 
+validate.userUpdateRules = () => {
+  return [
+    body("account_firstname")
+      .trim()
+      .escape()
+      .notEmpty()
+      .withMessage("Please provide a first name."),
+
+    body("account_lastname")
+      .trim()
+      .escape()
+      .notEmpty()
+      .isLength({ min: 2 })
+      .withMessage("Please provide a last name."),
+
+    body("account_email")
+      .trim()
+      .notEmpty()
+      .withMessage("Email is required.")
+      .isEmail()
+      .withMessage("A valid email is required.")
+      .normalizeEmail()
+      .custom(async (account_email, { req }) => {
+        const currentEmail = req.accountData?.account_email
+
+        if (currentEmail === account_email) {
+          return true
+        }
+
+        const emailExists = await accountModel.checkUpdateEmail(account_email, req.accountData.account_id)
+        if (emailExists) {
+          throw new Error("Email already exists. Please use a different email.")
+        }
+
+        return true
+      })
+  ]
+}
+
+validate.checkUserUpdateData = async (req, res, next) => {
+  const { account_firstname, account_lastname, account_email } = req.body
+  let errors = []
+  errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    let nav = await utilities.getNav()
+    res.render("account/update-account", {
+      errors,
+      title: "Update account",
+      nav,
+      account_firstname,
+      account_lastname,
+      account_email,
+    })
+    return
+  }
+  next()
+}
+
+validate.updatePasswordRules = () => {
+  return [
+    body("account_password")
+      .trim()
+      .notEmpty()
+      .withMessage("Password is required.")
+      .isStrongPassword({
+        minLength: 12,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+      .withMessage("Password does not meet requirements.")
+  ]
+}
+
+validate.checkPasswordUpdate = async (req, res, next) => {
+  const errors = validationResult(req)
+
+  if (!errors.isEmpty()) {
+    const nav = await utilities.getNav()
+    const accountData = res.locals.accountData
+    const firstName = accountData.account_firstname
+    return res.render("account/account-management", {
+      errors,
+      title: "Account Management",
+      nav,
+      firstName
+    })
+  }
+
+  next()
+}
+
 module.exports = validate

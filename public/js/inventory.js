@@ -15,7 +15,7 @@
   }) 
   .then(function (data) { 
    console.log(data); 
-   buildInventoryList(data); 
+   buildInventoryTable(data); 
   }) 
   .catch(function (error) { 
    console.log('There was a problem: ', error.message) 
@@ -23,7 +23,7 @@
  })
 
  // Build inventory items into HTML table components and inject into DOM 
-function buildInventoryList(data) { 
+function buildInventoryTable(data) { 
  let inventoryDisplay = document.getElementById("inventoryDisplay"); 
  // Set up the table labels 
  let dataTable = '<thead>'; 

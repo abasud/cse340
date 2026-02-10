@@ -23,6 +23,33 @@ router.post(
   utilities.handleErrors(accounts.accountLogin)
 )
 
-router.get("/accountManagement", utilities.checkLogin, utilities.handleErrors(accounts.buildAccountManagement))
+router.get(
+  "/accountManagement", 
+  utilities.checkLogin, 
+  utilities.handleErrors(accounts.buildAccountManagement))
+
+router.get("/user-update/:userID", utilities.handleErrors(accounts.viewUpdateUserData))
+router.post(
+  "/update-account",
+  utilities.checkJWTToken,
+  utilities.checkLogin,
+  regValidate.userUpdateRules(),
+  regValidate.checkUserUpdateData,
+  utilities.handleErrors(accounts.registerUserUpdate)
+)
+router.post(
+  "/update-password",
+  utilities.checkJWTToken,
+  utilities.checkLogin,
+  regValidate.updatePasswordRules(),
+  regValidate.checkPasswordUpdate,
+  utilities.handleErrors(accounts.registerNewPassword)
+)
+
+router.get("/logout", (req, res) => {
+  res.clearCookie("jwt", { path: "/" })
+  req.flash("success", "Your session was closed.")
+  res.redirect("/")
+})
 
 module.exports = router;

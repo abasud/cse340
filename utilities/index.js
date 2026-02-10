@@ -124,6 +124,7 @@ Util.checkJWTToken = (req, res, next) => {
      res.clearCookie("jwt")
      return res.redirect("/account/login")
     }
+    req.accountData = accountData
     res.locals.accountData = accountData
     res.locals.loggedin = 1
     next()
@@ -144,5 +145,22 @@ Util.checkJWTToken = (req, res, next) => {
     return res.redirect("/account/login")
   }
  }
+
+ /* ****************************************
+ *  Determines whether the user is employee or admin
+ * ************************************ */
+ Util.checkProfile = (req, res, next) => {
+
+  const accountType = res.locals.accountData.account_type
+
+  if (accountType === "Employee" || accountType === "Admin") {
+    next()
+  } else {
+    req.flash(
+    "notice",
+    "You do not have permission to access that resource.")
+    return res.redirect("/account/login")
+  }  
+}
 
 module.exports = Util
