@@ -155,7 +155,7 @@ async function registerUserUpdate(req, res) {
     account_lastname,
     account_email } = req.body
 
-  const account_id = req.accountData.account_id
+  const account_id = req.user.account_id
 
   const updateUser = await accountModel.updateUserData(
     account_id,
@@ -219,6 +219,60 @@ async function registerNewPassword(req, res) {
   }
 }
 
+// Builds the delete account view
+async function confirmDelete(req, res) {
+  let nav = await utilities.getNav()
+  res.render("account/confirm-delete", {
+    title: "Delete Account",
+    nav,
+    errors: null
+  })
+}
+
+// Process the account deletion
+async function deleteProcess(req, res) {
+  const nav = await utilities.getNav()
+  const { account_password } = req.body
+  const account_id = req.user.account_id
+
+  const accountData = await accountModel.getUserDataByID(account_id)
+
+  if (!accountData) {
+    req.flash("notice", "User not found.")
+    return res.redirect("/account/confirm-delete")
+  }
+
+  const match = await bcrypt.compare(
+    account_password,
+    accountData.account_password
+  )
+
+  if (!match) {
+    req.flash("notice", "Please check your password and try again.")
+    return res.render("account/confirm-delete", {
+      title: "Delete Account",
+      nav,
+      errors: null
+    })
+  }
+
+  const deleted = await accountModel.deleteAccount(account_id)
+
+  if (deleted) {
+    res.clearCookie("jwt")
+    req.flash("notice", "Your account has been deleted. It's sad to see you go =(")
+    return res.redirect("/")
+  }
+
+  req.flash("notice", "Account deletion failed.")
+  res.render("account/confirm-delete", {
+    title: "Delete Account",
+    nav,
+    errors: null
+  })
+}
+
+
 module.exports = { 
   buildLogin, 
   buildRegister, 
@@ -227,4 +281,6 @@ module.exports = {
   buildAccountManagement, 
   viewUpdateUserData,
   registerUserUpdate,
-  registerNewPassword }
+  registerNewPassword, 
+  confirmDelete,
+  deleteProcess }

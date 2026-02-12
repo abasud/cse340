@@ -1,0 +1,21 @@
+<% if (title) { %>
+<h1><%= title %></h1>
+<% } else {
+  res.redirect('/')
+} %>
+
+<%- messages() %>
+
+<% if (errors) { %>
+  <ul class="notice">
+ <% errors.array().forEach(error => { %>
+   <li><%= error.msg %></li>
+<%  }) %>
+ </ul>
+<% } %>
+
+<form class="login-form" action="/account/delete" method="post">
+    <p id="delete-p">Enter your password to confirm account deletion</p>
+    <input type="password" name="account_password" id="accountPassword" required>
+    <button type="submit">Confirm Delete</button>
+</form>

@@ -136,13 +136,13 @@ validate.userUpdateRules = () => {
       .withMessage("A valid email is required.")
       .normalizeEmail()
       .custom(async (account_email, { req }) => {
-        const currentEmail = req.accountData?.account_email
+        const currentEmail = req.user?.account_email
 
         if (currentEmail === account_email) {
           return true
         }
 
-        const emailExists = await accountModel.checkUpdateEmail(account_email, req.accountData.account_id)
+        const emailExists = await accountModel.checkUpdateEmail(account_email, req.user.account_id)
         if (emailExists) {
           throw new Error("Email already exists. Please use a different email.")
         }
@@ -200,6 +200,32 @@ validate.checkPasswordUpdate = async (req, res, next) => {
       title: "Account Management",
       nav,
       firstName
+    })
+  }
+
+  next()
+}
+
+validate.deletePassword = () => {
+  return [
+    body("account_password")
+      .trim()
+      .notEmpty()
+      .withMessage("The password is required.")
+      .isLength({ min: 8 })
+      .withMessage("Invalid password.")
+  ]
+}
+
+validate.checkDeletePassword = async (req, res, next) => {
+  const errors = validationResult(req)
+
+  if (!errors.isEmpty()) {
+    const nav = await utilities.getNav()
+    return res.render("account/confirm-delete", {
+      title: "Delete Account",
+      nav,
+      errors,
     })
   }
 

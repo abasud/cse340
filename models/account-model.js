@@ -97,6 +97,13 @@ async function updatePassword(
     return result.rowCount
 }
 
+async function deleteAccount(account_id) {
+    const sql = 
+    "DELETE FROM public.account WHERE account_id = $1"
+    const result = await pool.query(sql, [ account_id ])
+    return result.rowCount
+}
+
 module.exports = { 
   registerAccount, 
   checkExistingEmail, 
@@ -104,4 +111,5 @@ module.exports = {
   getUserDataByID,
   updateUserData, 
   checkUpdateEmail,
-  updatePassword }
+  updatePassword,
+  deleteAccount }

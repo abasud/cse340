@@ -52,4 +52,13 @@ router.get("/logout", (req, res) => {
   res.redirect("/")
 })
 
+router.get("/delete/:userID", utilities.handleErrors(accounts.confirmDelete))
+router.post(
+  "/delete",
+  utilities.checkJWTToken,
+  utilities.checkLogin,
+  regValidate.deletePassword(),
+  regValidate.checkDeletePassword,
+  utilities.handleErrors(accounts.deleteProcess))
+
 module.exports = router;
